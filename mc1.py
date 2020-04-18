@@ -148,10 +148,49 @@ def get_test_data(df, embeds, dct_n2i):
   return np.array(data)
     
 
+def get_model(input_shape):
+  tf_input = tf.keras.layers.Input(input_shape)
+  tf_x = tf_input
+  tf_x1 = tf.keras.layers.Conv1D(64, 1, activation='relu')(tf_x)
+  tf_x2 = tf.keras.layers.Conv1D(64, 3, activation='relu')(tf_x)
+  tf_x3 = tf.keras.layers.Conv1D(64, 5, activation='relu')(tf_x)
+  
+  tf_x1 = tf.keras.layers.LSTM(64)(tf_x1)
+  tf_x2 = tf.keras.layers.LSTM(64)(tf_x2)
+  tf_x3 = tf.keras.layers.LSTM(64)(tf_x3)
+  
+  tf_x = tf.keras.layers.concatenate([tf_x1, tf_x2, tf_x3])
+  
+  tf_out = tf.keras.layers.Dense(len(CLASSES), activatio='softmax')
+  
+  model = tf.keras.models.Model(tf_input, tf_out, name='MC')
+  model.compile(
+      loss='sparse_categorical_crossentropy',
+      optimizer='nadam',
+      metrics=['acc']
+      )
+  return model
+
+def save_data(df, log):
+  df_hl = df[~df.DQType.isna()]
+  log.P("Found {} labels".format(df_hl.shape[0]))
+  for i in range(df_hl.shape[0]):
+    subfolder = df_hl.iloc[i].DQType
+    file = df_hl.iloc[i].Key
+    fn = os.path.join(DATA_FOLDER, subfolder, file.lower() + '.txt')
+    txt = df_hl[df_hl.Key == file][['Description']].iloc[0,0]
+    with open(fn, 'wt', encoding="utf-8") as fh:
+      fh.write(txt)
+  return
+  
+
 if __name__ == '__main__':
+  
+  FULL_TRAIN = True
+  
   GLV_FILE = os.path.join(DATA_FOLDER, 'glove.6B.50d.txt')
   EMBS_FILE = os.path.join(DATA_FOLDER, 'embs_voc.npz')
-  DATA_FILE = os.path.join(DATA_FOLDER, 'data1.xlsx')
+  DATA_FILE = os.path.join(DATA_FOLDER, 'data2.xlsx')
   log = Log()
   
 
@@ -162,6 +201,7 @@ if __name__ == '__main__':
       os.mkdir(_dir)
   df_inp = pd.read_excel(DATA_FILE)
   df = df_inp[~df_inp.Description.isna()]
+  save_data(df, log=log)
   
   if 'np_embeds' not in globals():
     if os.path.isfile(EMBS_FILE):
@@ -201,47 +241,30 @@ if __name__ == '__main__':
   for c in CLASSES:
     show_word(c)
     
-  X, y = load_train_data(
-      embeds=np_embeds,
-      dct_n2i=dct_n2i,
-      seq_size=500)
-  
-  log.P(decode(X[0], np_embeds, dct_i2n))
-  
-  
-  tf_input = tf.keras.layers.Input(X.shape[1:])
-  tf_x = tf_input
-  tf_x1 = tf.keras.layers.Conv1D(64, 1, activation='relu')(tf_x)
-  tf_x2 = tf.keras.layers.Conv1D(64, 3, activation='relu')(tf_x)
-  tf_x3 = tf.keras.layers.Conv1D(64, 5, activation='relu')(tf_x)
-  
-  tf_x1 = tf.keras.layers.LSTM(64)(tf_x1)
-  tf_x2 = tf.keras.layers.LSTM(64)(tf_x2)
-  tf_x3 = tf.keras.layers.LSTM(64)(tf_x3)
-  
-  tf_x = tf.keras.layers.concatenate([tf_x1, tf_x2, tf_x3])
-  
-  tf_out = tf.keras.layers.Dense(len(CLASSES), activatio='softmax')
-  
-  model = tf.keras.models.Model(tf_input, tf_out, name='MC')
-  model.compile(
-      loss='sparse_categorical_crossentropy',
-      optimizer='nadam',
-      metrics=['acc']
-      )
-  model.fit(X, y)
-  
-  
-  x_test = get_test_data(df, np_embeds, dct_n2i)
-  
-  yh = model.predict(x_test).argmax(axis=1)
-  labels = [CLASSES[y] for y in yh]
-  df_res = pd.DataFrame({
-      'KEY' : df.Key,
-      'LABEl' : labels
-      })
-  df_res.to_csv('results.csv')
-  
+  if FULL_TRAIN:
+    log.P("Prepare data...")
+    X, y = load_train_data(
+        embeds=np_embeds,
+        dct_n2i=dct_n2i,
+        seq_size=500)
+    log.P("Done prepare data.")
+    
+    log.P(decode(X[0], np_embeds, dct_i2n))
+    
+    model = get_model(X.shape[1:])
+    model.fit(X, y, epochs=10)
+    
+    
+    x_test = get_test_data(df, np_embeds, dct_n2i)
+    
+    yh = model.predict(x_test).argmax(axis=1)
+    labels = [CLASSES[y] for y in yh]
+    df_res = pd.DataFrame({
+        'KEY' : df.Key,
+        'LABEl' : labels
+        })
+    df_res.to_csv('results.csv')
+    
   
   
   

@@ -1,8 +1,0 @@
-Timeliness references whether information is available when it is expected and needed. Timeliness of data is very important. This is reflected in:
-
-Companies that are required to publish their quarterly results within a given frame of time
-Customer service providing up-to date information to the customers
-Credit system checking in real-time on the credit card account activity
-The timeliness depends on user expectation. Online availability of data could be required for room allocation system in hospitality, but nightly data could be perfectly acceptable for a billing system.
-
-As you can see, data quality is an important issue that should be considered – starting with initial application design, all the way through implementation, maintenance and use. In future blog posts, we will discuss techniques for addressing these types of data quality issues.

@@ -1,4 +1,0 @@
-Conformity means the data is following the set of standard data definitions like data type, size and format. For example, date of birth of customer is in the format “mm/dd/yyyy”
-
-Questions you can ask yourself: Do data values comply with the specified formats? If so, do all the data values comply with those formats?
-Maintaining conformance to specific formats is important.
