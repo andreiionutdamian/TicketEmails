@@ -151,17 +151,19 @@ def get_test_data(df, embeds, dct_n2i):
 def get_model(input_shape):
   tf_input = tf.keras.layers.Input(input_shape)
   tf_x = tf_input
-  tf_x1 = tf.keras.layers.Conv1D(64, 1, activation='relu')(tf_x)
-  tf_x2 = tf.keras.layers.Conv1D(64, 3, activation='relu')(tf_x)
-  tf_x3 = tf.keras.layers.Conv1D(64, 5, activation='relu')(tf_x)
+  tf_x1 = tf.keras.layers.Conv1D(256, 1, activation='relu')(tf_x)
+  tf_x2 = tf.keras.layers.Conv1D(256, 3, activation='relu')(tf_x)
+  tf_x3 = tf.keras.layers.Conv1D(256, 5, activation='relu')(tf_x)
   
-  tf_x1 = tf.keras.layers.LSTM(64)(tf_x1)
-  tf_x2 = tf.keras.layers.LSTM(64)(tf_x2)
-  tf_x3 = tf.keras.layers.LSTM(64)(tf_x3)
+  tf_x1 = tf.keras.layers.LSTM(256)(tf_x1)
+  tf_x2 = tf.keras.layers.LSTM(256)(tf_x2)
+  tf_x3 = tf.keras.layers.LSTM(256)(tf_x3)
   
   tf_x = tf.keras.layers.concatenate([tf_x1, tf_x2, tf_x3])
+  tf_x = tf.keras.layers.Dense(384, activation='relu')(tf_x)  
   
-  tf_out = tf.keras.layers.Dense(len(CLASSES), activatio='softmax')
+  tf_out = tf.keras.layers.Dense(len(CLASSES), 
+                                 activation='softmax')(tf_x)
   
   model = tf.keras.models.Model(tf_input, tf_out, name='MC')
   model.compile(
