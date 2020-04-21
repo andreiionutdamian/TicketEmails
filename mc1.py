@@ -190,13 +190,16 @@ if __name__ == '__main__':
     
     x_test = get_test_data(df, np_embeds, dct_n2i, seq_size=SEQ_SIZE)
     
-    yh = model.predict(x_test).argmax(axis=1)
-    labels = [CLASSES[y] for y in yh]
+    yh = model.predict(x_test)
+    yp = yh.argmax(axis=1)
+    labels = [CLASSES[y] for y in yp]
+    procs = [round(p[x] * 100,2) for p, x in zip(yh, yp)]
     df_res = pd.DataFrame({
         'KEY' : df.Key,
-        'LABEL' : labels
+        'LABEL' : labels,
+        'PROBA' : procs
         })
-    df_res.to_csv('results.csv')
+    df_res.to_csv('results.csv', index=False)
     
   
   
