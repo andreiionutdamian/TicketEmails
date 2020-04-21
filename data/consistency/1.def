@@ -1,0 +1,5 @@
+Consistency means data across all systems reflects the same information and are in synch with each other across the enterprise. Examples:
+
+A business unit status is closed but there are sales for that business unit.
+Employee status is terminated but pay status is active.
+Questions you can ask yourself: Are data values the same across the data sets? Are there any distinct occurrences of the same data instances that provide conflicting information?

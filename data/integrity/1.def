@@ -1,0 +1,6 @@
+Integrity means validity of data across the relationships and ensures that all data in a database can be traced and connected to other data.
+
+For example, in a customer database, there should be a valid customer, addresses and relationship between them. If there is an address relationship data without a customer then that data is not valid and is considered an orphaned record.
+
+Ask yourself: Is there are any data missing important relationship linkages?
+The inability to link related records together may actually introduce duplication across your systems.

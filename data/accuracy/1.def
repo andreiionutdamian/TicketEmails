@@ -1,0 +1,6 @@
+Accuracy is the degree to which data correctly reflects the real world object OR an event being described. Examples:
+
+Sales of the business unit are the real value.
+Address of an employee in the employee database is the real address.
+Questions you can ask yourself: Do data objects accurately represent the “real world” values they are expected to model? Are there incorrect spellings of product or person names, addresses, and even untimely or not current data?
+These issues can impact operational and advanced analytics applications.

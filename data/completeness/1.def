@@ -1,0 +1,5 @@
+Completeness is defined as expected comprehensiveness. Data can be complete even if optional data is missing. As long as the data meets the expectations then the data is considered complete.
+
+For example, a customer’s first name and last name are mandatory but middle name is optional; so a record can be considered complete even if a middle name is not available.
+
+Questions you can ask yourself: Is all the requisite information available? Do any data values have missing elements? Or are they in an unusable state?
