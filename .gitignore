@@ -6,3 +6,5 @@
 *.xlsx
 
 *.npz
+
+__pycache__/
