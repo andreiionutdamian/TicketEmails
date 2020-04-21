@@ -24,14 +24,16 @@ DATA_FOLDER = 'data'
 
 
 
-def classify_by_neighbor(tokens, embeds, dct_n2i):
+def classify_by_neighbor(tokens, embeds, dct_n2i, thr=0.5):
   idxs = [dct_n2i[w] for w in CLASSES]
   np_class_emb = np.array([embeds[x] for x in idxs])
   _count = np.zeros(len(CLASSES))
   for token in tokens:
     dists = utils.cos_dist(embeds[token], np_class_emb)
-    _best = np.argmax(dists)
-    _count[_best] += 1
+    dists_filt = np.where(dists <= thr, dists, np.ones(dists.shape) * np.inf)
+    _best = np.argmin(dists_filt)
+    if dists_filt[_best] < 2:
+      _count[_best] += 1
   return np.argmax(_count)
 
 

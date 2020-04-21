@@ -85,7 +85,9 @@ def get_model(input_shape):
   tf_x3 = tf.keras.layers.LSTM(256)(tf_x3)
   
   tf_x = tf.keras.layers.concatenate([tf_x1, tf_x2, tf_x3])
+  tf_x = tf.keras.layers.Dropout(0.7)(tf_x)
   tf_x = tf.keras.layers.Dense(384, activation='relu')(tf_x)  
+  tf_x = tf.keras.layers.Dropout(0.7)(tf_x)
   
   tf_out = tf.keras.layers.Dense(len(CLASSES), 
                                  activation='softmax')(tf_x)
